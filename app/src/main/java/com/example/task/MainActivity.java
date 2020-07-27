@@ -1,5 +1,9 @@
 package com.example.task;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,23 +26,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Date;
 import java.util.List;
 
+import static com.example.task.ReminderBroadcast.CHANNEL_ID;
+
 
 /**
- * This class displays a list of task in a RecyclerView.
- * The task are saved in a Room database.
- * The layout for this activity also displays a FAB that
- * allows users to start the NewTaskActivity to add new tasks.
- * Users can delete a task by swiping it away, or delete all words
- * through the Options menu. Whenever a new word is added, deleted,
- * or updated, the RecyclerView showing the list of words
- * automatically updates.
+ * This class displays a list of task in a RecyclerView. The task are saved in a Room database.
+ * The layout for this activity also displays a FAB that allows users to start the
+ * NewTaskActivity to add new tasks. Users can delete a task by swiping it away, or delete all
+ * tasks through the Options menu. Whenever a new task is added, deleted, or updated,
+ * the RecyclerView showing the list of tasks automatically updates.
+ *
  */
 public class MainActivity extends AppCompatActivity {
-    // Request codes
+
+    // Request codes for intents.
     public static final int NEW_TASK_REQUEST_CODE = 1;
     public static final int UPDATE_TASK_REQUEST_CODE = 2;
 
@@ -47,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_DATA_UPDATE_DETAILS = "extra_details_to_be_updated";
     public static final String EXTRA_DATA_UPDATE_DATE = "extra_date_to_be_updated";
 
+    private FirebaseAuth mAuth;
     private TaskViewModel mViewModel;
     private TaskListAdapter mAdapter;
     private CoordinatorLayout mCoordinatorLayout;
@@ -60,33 +68,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Get the instance of the view objects and capture them from the layout.
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
         mFab = findViewById(R.id.fab);
 
-        // Set up the custom toolbar
+        mAuth = FirebaseAuth.getInstance();
+
+        // Set up the custom toolbar.
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Floating action button setup
-        mFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createNewTask();
-            }
-        });
-
-        // Set up the RecyclerView
+        // Set up the recycler view.
+        mAdapter = new TaskListAdapter();
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
-
-        mAdapter = new TaskListAdapter();
         recyclerView.setAdapter(mAdapter);
 
-        // Set up the WordViewModel.
+        // Set up the view model.
+        // Get all the tasks from the database and associate them to the adapter.
         mViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
-        // Get all the words from the database
-        // and associate them to the mAdapter.
         mViewModel.getAllTasks().observe(this, new Observer<List<Task>>() {
             @Override
             public void onChanged(@Nullable List<Task> tasks) {
@@ -94,12 +95,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Add the functionality to swipe items in the
-        // RecyclerView to delete the swiped item.
+        // Add the functionality to swipe items in the RecyclerView to delete the swiped item.
         ItemTouchHelper helper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
             // Will not implement the onMove() in this app.
+            @Override
             public boolean onMove(@NonNull RecyclerView recyclerView,
                                   @NonNull RecyclerView.ViewHolder viewHolder,
                                   @NonNull RecyclerView.ViewHolder target) {
@@ -111,20 +111,19 @@ public class MainActivity extends AppCompatActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 Task myTask = mAdapter.getTaskAtPosition(position);
-                // Delete the task.
-                mViewModel.delete(myTask);
+                mViewModel.delete(myTask); // Delete the task.
                 taskCompleted();
             }
         });
-        // Attach the ItemTouchHelper to the RecyclerView.
-        helper.attachToRecyclerView(recyclerView);
+        helper.attachToRecyclerView(recyclerView); // Attach the touch helper to recycler view.
 
+        // The user can edit and update the task, when the item in the recycler view is clicked.
         mAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Task task) {
                launchEditActivity(task);
             }
-
+            // The user can also remove/complete the task when the radio button is click.
             @Override
             public void onDeleteClick(int position) {
                 Task myTask = mAdapter.getTaskAtPosition(position);
@@ -132,8 +131,37 @@ public class MainActivity extends AppCompatActivity {
                 taskCompleted();
             }
         });
+
+        // Floating action button setup.
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createNewTask();
+            }
+        });
     }
 
+    /**
+     * Check firebase if there is a user currently logged in.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null || !currentUser.isEmailVerified()) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    // TODO: Edit this part.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -292,5 +320,35 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_DATA_UPDATE_DATE, date);
         } // No date from the selected task.
         startActivityForResult(intent, UPDATE_TASK_REQUEST_CODE);
+    }
+
+    /**
+     * Creates a Notification channel, for OREO and higher.
+     */
+    public void createNotificationChannel() {
+        // Notification channels are only available in OREO and higher.
+        // So, add a check on SDK version.
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            CharSequence name = "ChannelName";
+            String description = "Channel for this notification.";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Create a notification manager object.
+            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    private void createAlarm() {
+        Toast.makeText(MainActivity.this, "Reminder set!", Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                MainActivity.this, 0, intent, 0);
+        AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        long timeAtButtonClick = System.currentTimeMillis();
+        long tenSeconds = 1000*10;
+        manager.set(AlarmManager.RTC_WAKEUP, timeAtButtonClick + tenSeconds, pendingIntent);
     }
 }

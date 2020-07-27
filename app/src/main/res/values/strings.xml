@@ -5,7 +5,37 @@
     <string name="delete_all_tasks_message">Are you sure you want to delete all the tasks?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
-    <string name="press_back_again">Press back again to Exit.</string>
+    <string name="press_back_again">Tap again to exit.</string>
     <string name="no_task">Empty</string>
     <string name="no_task_message">You have no task. Anything to add?</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="register_here">No account yet? Register here.</string>
+    <string name="login">Login</string>
+    <string name="notice">Notice</string>
+    <string name="notice_message">
+        We understand the importance of privacy.
+        In order to more fully present our collection and use your personal information,
+        we have revised our privacy policy and user agreement in detail in accordance
+        with the latest laws and regulations. When you click agree, you have fully read,
+        understood and accepted all of the updated Privacy Policy and User Agreement.
+        Please take some time to become familiar with our privacy policy,
+        and if you have any questions, please feel free to contact us.
+    </string>
+    <string name="agree">Agree</string>
+    <string name="cancel">Cancel</string>
+    <string name="register">Register</string>
+    <string name="full_name">Full name</string>
+    <string name="phone_number">Phone number</string>
+    <string name="agree_to_policy">I agree to Privacy Policy and User Agreement</string>
+    <string name="next">Next</string>
+    <string name="tick_box">Tick the box above, to proceed.</string>
+    <string name="password">Password</string>
+    <string name="email_address">Email address</string>
+    <string name="done">Done</string>
+    <string name="send_email">Send verification email</string>
+    <string name="cannot_be_empty">This field cannot be empty.</string>
+    <string name="digits_required">11 digits required.</string>
+    <string name="email_bad_format">The email address is badly formatted.</string>
+    <string name="password_error">The password should be at least 6 characters with a mix of letters, numbers and symbols.</string>
+
 </resources>

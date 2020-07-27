@@ -136,6 +136,7 @@ public class TaskListAdapter extends ListAdapter<Task, TaskListAdapter.TaskViewH
 
     public interface OnItemClickListener {
         void onItemClick(Task task);
+
         void onDeleteClick(int position);
     }
 

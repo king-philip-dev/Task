@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_navigation"
+    app:startDestination="@id/start_up">
+
+    <fragment
+        android:id="@+id/start_up"
+        android:name="com.example.task.login.StartUpFragment"
+        tools:layout="@layout/fragment_start_up" >
+        <action
+            android:id="@+id/action_start_up_to_login"
+            app:destination="@id/login" />
+        <action
+            android:id="@+id/action_start_up_to_initial_register"
+            app:destination="@id/register_initial" />
+    </fragment>
+    <fragment
+        android:id="@+id/login"
+        android:name="com.example.task.login.LoginFragment"
+        tools:layout="@layout/fragment_login" />
+    <fragment
+        android:id="@+id/register_initial"
+        android:name="com.example.task.login.RegisterInitialFragment"
+        tools:layout="@layout/fragment_register_initial" >
+        <action
+            android:id="@+id/action_register_initial_to_register_final"
+            app:destination="@id/register_final" />
+    </fragment>
+    <fragment
+        android:id="@+id/register_final"
+        android:name="com.example.task.login.RegisterFinalFragment"
+        tools:layout="@layout/fragment_register_final" >
+        <argument
+            android:name="name"
+            app:argType="string" />
+        <argument
+            android:name="phone"
+            app:argType="string" />
+    </fragment>
+</navigation>
