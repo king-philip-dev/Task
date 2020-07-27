@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Task</string>
+    <string name="task_completed">Task completed. Good job!</string>
+    <string name="delete_all_tasks">Delete All</string>
+    <string name="delete_all_tasks_message">Are you sure you want to delete all the tasks?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="press_back_again">Press back again to Exit.</string>
+    <string name="no_task">Empty</string>
+    <string name="no_task_message">You have no task. Anything to add?</string>
+</resources>

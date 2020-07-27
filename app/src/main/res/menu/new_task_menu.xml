@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/save_task"
+        android:title="Save"
+        android:icon="@drawable/ic_round_save_24"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="3"/>
+    <item
+        android:id="@+id/add_details"
+        android:title="Add details"
+        android:icon="@drawable/ic_round_notes_24"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="2"/>
+    <item
+        android:id="@+id/set_date"
+        android:title="Set date"
+        android:icon="@drawable/ic_round_event_24"
+        app:showAsAction="ifRoom"
+        android:orderInCategory="1"/>
+</menu>
