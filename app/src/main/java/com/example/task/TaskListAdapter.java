@@ -1,7 +1,6 @@
 package com.example.task;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -85,7 +84,6 @@ public class TaskListAdapter extends ListAdapter<Task, TaskListAdapter.TaskViewH
         } else {
             holder.detailsItemView.setVisibility(View.GONE);
         }
-
     }
 
     /**

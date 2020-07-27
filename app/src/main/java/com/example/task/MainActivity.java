@@ -106,8 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
 
-            // When the use swipes a word,
-            // delete that word from the database.
+            // When the user swipes a task, delete that task from the database.
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
@@ -201,16 +200,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Tell user that the task had just completed.
+     */
     private void taskCompleted() {
-        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.task_completed, Snackbar.LENGTH_LONG);
-        snackbar.setAction("Undo", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-        snackbar.setActionTextColor(getResources().getColor(R.color.colorAccent));
-        snackbar.show();
+        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.task_completed,
+                Snackbar.LENGTH_LONG);
 
         snackbar.addCallback(new Snackbar.Callback() {
             @Override
@@ -225,6 +220,8 @@ public class MainActivity extends AppCompatActivity {
                 mFab.show();
             }
         });
+
+        snackbar.show();
     }
 
     /**
