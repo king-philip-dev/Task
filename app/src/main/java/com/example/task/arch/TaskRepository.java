@@ -1,4 +1,4 @@
-package com.example.task;
+package com.example.task.arch;
 
 import android.app.Application;
 import android.os.AsyncTask;

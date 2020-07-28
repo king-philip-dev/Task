@@ -1,13 +1,8 @@
 package com.example.task;
 
-import android.app.AlarmManager;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,6 +20,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.task.arch.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,8 +28,6 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Date;
 import java.util.List;
-
-import static com.example.task.ReminderBroadcast.CHANNEL_ID;
 
 
 /**
@@ -55,12 +49,12 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_DATA_UPDATE_DETAILS = "extra_details_to_be_updated";
     public static final String EXTRA_DATA_UPDATE_DATE = "extra_date_to_be_updated";
 
+    // Initialize member variables
     private FirebaseAuth mAuth;
     private TaskViewModel mViewModel;
     private TaskListAdapter mAdapter;
     private CoordinatorLayout mCoordinatorLayout;
-    private FloatingActionButton mFab;
-    private Toast mPressAgainToast;
+    private Snackbar mPressAgainSnackBar;
 
     private long beforeExitTime;
 
@@ -71,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
         // Get the instance of the view objects and capture them from the layout.
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
-        mFab = findViewById(R.id.fab);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -113,7 +106,10 @@ public class MainActivity extends AppCompatActivity {
                 int position = viewHolder.getAdapterPosition();
                 Task myTask = mAdapter.getTaskAtPosition(position);
                 mViewModel.delete(myTask); // Delete the task.
-                taskCompleted();
+                // Tell user the task is completed.
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.task_completed,
+                        Snackbar.LENGTH_LONG);
+                snackbar.show();
             }
         });
         helper.attachToRecyclerView(recyclerView); // Attach the touch helper to recycler view.
@@ -129,11 +125,15 @@ public class MainActivity extends AppCompatActivity {
             public void onDeleteClick(int position) {
                 Task myTask = mAdapter.getTaskAtPosition(position);
                 mViewModel.delete(myTask);
-                taskCompleted();
+                // Tell user the task is completed.
+                Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.task_completed,
+                        Snackbar.LENGTH_LONG);
+                snackbar.show();
             }
         });
 
         // Floating action button setup.
+        FloatingActionButton mFab = findViewById(R.id.fab);
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,15 +154,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    // TODO: Edit this part.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -207,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Task updated.", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(this, "Not saved.", Toast.LENGTH_SHORT).show();
+            Snackbar.make(mCoordinatorLayout, "Task not saved.", Snackbar.LENGTH_SHORT).show();
         }
     }
 
@@ -232,41 +225,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Tell user that the task had just completed.
-     */
-    private void taskCompleted() {
-        Snackbar snackbar = Snackbar.make(mCoordinatorLayout, R.string.task_completed,
-                Snackbar.LENGTH_LONG);
-
-        snackbar.addCallback(new Snackbar.Callback() {
-            @Override
-            public void onShown(Snackbar sb) {
-                super.onShown(sb);
-                mFab.hide();
-            }
-
-            @Override
-            public void onDismissed(Snackbar transientBottomBar, int event) {
-                super.onDismissed(transientBottomBar, event);
-                mFab.show();
-            }
-        });
-
-        snackbar.show();
-    }
-
-    /**
      * Do not close the app immediately.
      */
     @Override
     public void onBackPressed() {
         if (beforeExitTime + 2000 > System.currentTimeMillis()) {
-            mPressAgainToast.cancel();
+            mPressAgainSnackBar.dismiss();
             super.onBackPressed();
         } else {
-            mPressAgainToast = Toast.makeText(MainActivity.this, R.string.press_back_again,
-                    Toast.LENGTH_SHORT);
-            mPressAgainToast.show();
+            mPressAgainSnackBar = Snackbar.make(mCoordinatorLayout, "Tap again to exit.",
+                    Snackbar.LENGTH_SHORT);
+            mPressAgainSnackBar.show();
         }
         beforeExitTime = System.currentTimeMillis();
     }
@@ -290,7 +259,9 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             createNewTask();
                         }
-                    }).create().show();
+                    })
+                    .create()
+                    .show();
         } else {
             builder.setTitle(R.string.delete_all_tasks).setMessage(R.string.delete_all_tasks_message)
                     .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -298,7 +269,9 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             mViewModel.deleteAll();
                         }
-                    }).create().show();
+                    })
+                    .create()
+                    .show();
         }
     }
 
@@ -333,36 +306,5 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
-    }
-
-
-    /**
-     * Creates a Notification channel, for OREO and higher.
-     */
-    public void createNotificationChannel() {
-        // Notification channels are only available in OREO and higher.
-        // So, add a check on SDK version.
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            CharSequence name = "ChannelName";
-            String description = "Channel for this notification.";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Create a notification manager object.
-            NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            manager.createNotificationChannel(channel);
-        }
-    }
-
-    private void createAlarm() {
-        Toast.makeText(MainActivity.this, "Reminder set!", Toast.LENGTH_SHORT).show();
-
-        Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                MainActivity.this, 0, intent, 0);
-        AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        long timeAtButtonClick = System.currentTimeMillis();
-        long tenSeconds = 1000*10;
-        manager.set(AlarmManager.RTC_WAKEUP, timeAtButtonClick + tenSeconds, pendingIntent);
     }
 }

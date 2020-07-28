@@ -1,7 +1,4 @@
-package com.example.task;
-
-import android.os.Parcel;
-import android.os.Parcelable;
+package com.example.task.arch;
 
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;

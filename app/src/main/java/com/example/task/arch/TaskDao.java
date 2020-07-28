@@ -1,4 +1,4 @@
-package com.example.task;
+package com.example.task.arch;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

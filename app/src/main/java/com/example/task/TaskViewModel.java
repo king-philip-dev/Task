@@ -6,6 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.task.arch.Task;
+import com.example.task.arch.TaskRepository;
+
 import java.util.List;
 
 /**
