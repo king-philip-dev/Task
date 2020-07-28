@@ -41,32 +41,34 @@ public class NewTaskActivity extends AppCompatActivity {
     private EditText mEditTaskView;
     private EditText mEditDetailsView;
     private TextView mDateView;
-    private ImageButton mRemoveDateButton;
     private ConstraintLayout mLayoutDateView;
     private InputMethodManager imm;
 
     private long date;
 
-    @SuppressLint("CommitPrefEdits")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_task);
 
+        // Capture the instance of the view objects in the layout of this activity.
         mEditTaskView = findViewById(R.id.editText_task);
         mEditDetailsView = findViewById(R.id.editText_details);
         mDateView = findViewById(R.id.textView_date);
-        mRemoveDateButton = findViewById(R.id.imageButton_remove_date);
+        ImageButton mRemoveDateButton = findViewById(R.id.imageButton_remove_date);
         mLayoutDateView = findViewById(R.id.constraintLayout_date);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setHomeAsUpIndicator(R.drawable.ic_round_close_24);
-            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setTitle("");
         }
 
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_DATA_ID)) {
+            if (actionBar != null) {
+                actionBar.setTitle("Edit");
+            }
             String task = intent.getStringExtra(EXTRA_DATA_UPDATE_TASK);
             String details = intent.getStringExtra(EXTRA_DATA_UPDATE_DETAILS);
             mEditTaskView.setText(task);
@@ -96,6 +98,9 @@ public class NewTaskActivity extends AppCompatActivity {
                 mLayoutDateView.setVisibility(View.GONE);
             }
         } else {
+            if (actionBar != null) {
+                actionBar.setTitle("Add");
+            }
             mEditDetailsView.setVisibility(View.GONE);
             mLayoutDateView.setVisibility(View.GONE);
             // Otherwise, start with empty fields.
