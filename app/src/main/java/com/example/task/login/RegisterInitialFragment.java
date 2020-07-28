@@ -136,7 +136,7 @@ public class RegisterInitialFragment extends Fragment {
 
     /**
      * This object will notify the view object, in this case the EditText views
-     * if there are changes in its character inputs.
+     * if there are changes in the inserted characters.
      */
     private TextWatcher textWatcher = new TextWatcher() {
         @Override

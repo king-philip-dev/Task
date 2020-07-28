@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -219,14 +220,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.delete_all_tasks) {
-            confirmDeleteAllTasks();
-        } else {
-            return true;
+        switch (id) {
+            case R.id.delete_all_tasks:
+                confirmDeleteAllTasks();
+                return true;
+            case R.id.log_out:
+                logoutUser();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
 
     /**
      * Tell user that the task had just completed.
@@ -321,6 +324,17 @@ public class MainActivity extends AppCompatActivity {
         } // No date from the selected task.
         startActivityForResult(intent, UPDATE_TASK_REQUEST_CODE);
     }
+
+    /**
+     * Log out user account.
+     */
+    private void logoutUser() {
+        mAuth.signOut();
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
 
     /**
      * Creates a Notification channel, for OREO and higher.

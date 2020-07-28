@@ -2,5 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/delete_all_tasks"
-        android:title="Delete all tasks" />
+        android:title="@string/delete_all" />
+    <item
+        android:id="@+id/log_out"
+        android:title="@string/log_out"/>
 </menu>

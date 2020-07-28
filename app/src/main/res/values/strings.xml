@@ -37,5 +37,15 @@
     <string name="digits_required">11 digits required.</string>
     <string name="email_bad_format">The email address is badly formatted.</string>
     <string name="password_error">The password should be at least 6 characters with a mix of letters, numbers and symbols.</string>
+    <string name="email_already_in_use">This email is already in use by another account.</string>
+    <string name="delete_all">Delete all</string>
+    <string name="log_out">Log out</string>
+    <string name="confirm_exit">Are you sure you want to exit?</string>
+    <string name="exit">Exit</string>
+    <string name="verify">Verify</string>
+    <string name="email_sent">Email sent.</string>
+    <string name="verify_to_proceed">Verify email to proceed.</string>
+    <string name="invalid_user">There is no user record corresponding to this identifier or the user may have been deleted.</string>
+    <string name="incorrect_password">Incorrect password.</string>
 
 </resources>
