@@ -47,5 +47,8 @@
     <string name="verify_to_proceed">Verify email to proceed.</string>
     <string name="invalid_user">There is no user record corresponding to this identifier or the user may have been deleted.</string>
     <string name="incorrect_password">Incorrect password.</string>
+    <string name="task">Task</string>
+    <string name="details">Details</string>
+    <string name="date">Date</string>
 
 </resources>
