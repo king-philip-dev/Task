@@ -1,7 +1,9 @@
 package com.example.task;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.example.task.arch.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -49,11 +52,18 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_DATA_UPDATE_DETAILS = "extra_details_to_be_updated";
     public static final String EXTRA_DATA_UPDATE_DATE = "extra_date_to_be_updated";
 
+    private static final String PREF_FILE = "shared_pref_file";
+    private static final String VISIBILITY_KEY = "visibility";
+    private boolean isItemVisible;
+
+
     // Initialize member variables
     private FirebaseAuth mAuth;
     private TaskViewModel mViewModel;
+    private SharedPreferences mSharedPrefs;
     private TaskListAdapter mAdapter;
     private CoordinatorLayout mCoordinatorLayout;
+    private RecyclerView mRecyclerView;
     private Snackbar mPressAgainSnackBar;
 
     private long beforeExitTime;
@@ -67,7 +77,11 @@ public class MainActivity extends AppCompatActivity {
         // Get the instance of the view objects and capture them from the layout.
         mCoordinatorLayout = findViewById(R.id.coordinatorLayout);
 
+        // Initialize the Firebase instance.
         mAuth = FirebaseAuth.getInstance();
+
+        // Create the shared pref file.
+        mSharedPrefs = getSharedPreferences(PREF_FILE, Context.MODE_PRIVATE);
 
         // Set up the custom toolbar.
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -75,10 +89,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up the recycler view.
         mAdapter = new TaskListAdapter();
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(mAdapter);
+        mRecyclerView = findViewById(R.id.recyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setAdapter(mAdapter);
 
         // Set up the view model.
         // Get all the tasks from the database and associate them to the adapter.
@@ -113,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
                 snackbar.show();
             }
         });
-        helper.attachToRecyclerView(recyclerView); // Attach the touch helper to recycler view.
+        helper.attachToRecyclerView(mRecyclerView); // Attach the touch helper to recycler view.
 
         // The user can edit and update the task, when the item in the recycler view is clicked.
         mAdapter.setOnItemClickListener(new TaskListAdapter.OnItemClickListener() {
@@ -212,7 +225,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        isItemVisible = mSharedPrefs.getBoolean(VISIBILITY_KEY, isItemVisible);
+
+        if (isItemVisible) {
+            menu.findItem(R.id.linear_view).setVisible(true);
+            menu.findItem(R.id.staggered_view).setVisible(false);
+        } else {
+            menu.findItem(R.id.linear_view).setVisible(false);
+            menu.findItem(R.id.staggered_view).setVisible(true);
+        }
+
+        // Set the item layout
+        if (menu.findItem(R.id.linear_view).isVisible()) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        } else {
+            mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(2,
+                    StaggeredGridLayoutManager.VERTICAL));
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        SharedPreferences.Editor editor = mSharedPrefs.edit();
         int id = item.getItemId();
         switch (id) {
             case R.id.delete_all_tasks:
@@ -220,6 +256,16 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.log_out:
                 logoutUser();
+                return true;
+            case R.id.linear_view:
+                item.setIcon(R.drawable.ic_round_dashboard_24);
+                isItemVisible = false;
+                saveItemVisibility(editor);
+                return true;
+            case R.id.staggered_view:
+                item.setIcon(R.drawable.ic_round_view_agenda_24);
+                isItemVisible = true;
+                saveItemVisibility(editor);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -239,6 +285,15 @@ public class MainActivity extends AppCompatActivity {
             mPressAgainSnackBar.show();
         }
         beforeExitTime = System.currentTimeMillis();
+    }
+
+    /**
+     * Save the menu item visibility in the shared pref file.
+     */
+    private void saveItemVisibility(SharedPreferences.Editor editor) {
+        editor.putBoolean(VISIBILITY_KEY, isItemVisible);
+        editor.apply();
+        this.invalidateOptionsMenu();
     }
 
     /**

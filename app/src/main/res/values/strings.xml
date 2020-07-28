@@ -50,5 +50,7 @@
     <string name="task">Task</string>
     <string name="details">Details</string>
     <string name="date">Date</string>
+    <string name="linear">Linear</string>
+    <string name="staggered">Staggered</string>
 
 </resources>

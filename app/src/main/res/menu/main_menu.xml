@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/delete_all_tasks"
         android:title="@string/delete_all" />
     <item
         android:id="@+id/log_out"
         android:title="@string/log_out"/>
+    <item
+        android:id="@+id/linear_view"
+        android:icon="@drawable/ic_round_view_agenda_24"
+        android:title="@string/linear"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/staggered_view"
+        android:icon="@drawable/ic_round_dashboard_24"
+        android:title="@string/staggered"
+        app:showAsAction="ifRoom"/>
 </menu>
