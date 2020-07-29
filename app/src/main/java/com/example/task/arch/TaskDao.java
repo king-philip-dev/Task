@@ -13,8 +13,8 @@ import java.util.List;
 /**
  * Data Access Object (DAO) for a task.
  * Each method performs a database operation,
- * such as inserting or deleting a word,
- * running a DB query, or deleting all words.
+ * such as inserting or deleting a task,
+ * running a DB query, or deleting all tasks.
  */
 @Dao
 public interface TaskDao {

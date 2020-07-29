@@ -10,7 +10,7 @@ import androidx.room.TypeConverters;
 import java.util.Date;
 
 /**
- * Entity class that represents a word in the database
+ * Entity class that represents a task in the database
  */
 @Entity(tableName = "task_table")
 public class Task {

@@ -89,7 +89,7 @@ public class TaskListAdapter extends ListAdapter<Task, TaskListAdapter.TaskViewH
     }
 
     /**
-     * Gets the word at a given position.
+     * Gets the task at a given position.
      * This method is useful for identifying which task
      * was clicked or swiped in methods that handle user events.
      *

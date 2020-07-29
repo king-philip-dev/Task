@@ -66,7 +66,7 @@ public abstract class TaskRoomDatabase extends RoomDatabase {
 
         @Override
         protected Void doInBackground(final Void... voids) {
-            // If we have no words, then create the initial list of words.
+            // If we have no tasks, then create the initial list of tasks.
             mDao.insert(new Task ("Task", "Added details", Calendar.getInstance().getTime()));
             return null;
         }
