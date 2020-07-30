@@ -52,5 +52,6 @@
     <string name="date">Date</string>
     <string name="linear">Linear</string>
     <string name="staggered">Staggered</string>
+    <string name="cannot_be_updated">Task cannot be updated.</string>
 
 </resources>

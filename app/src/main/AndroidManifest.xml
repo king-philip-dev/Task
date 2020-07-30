@@ -11,16 +11,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- Login Activity-->
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 
+        <!-- New Task Activity-->
         <activity
             android:name=".NewTaskActivity"
             android:parentActivityName=".MainActivity">
         </activity>
 
+        <!-- Main Activity-->
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.Splash">

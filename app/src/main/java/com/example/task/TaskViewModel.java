@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class TaskViewModel extends AndroidViewModel {
 
+    // Member variables
     private TaskRepository mRepository;
     private LiveData<List<Task>> mAllTasks;
 
@@ -26,6 +27,7 @@ public class TaskViewModel extends AndroidViewModel {
         mAllTasks = mRepository.getAllTasks();
     }
 
+    // Methods that will be used in the main activity.
     LiveData<List<Task>> getAllTasks() {
         return mAllTasks;
     }

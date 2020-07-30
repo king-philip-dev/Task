@@ -41,6 +41,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+/**
+ * This class contains the login UI. It uses the Firebase service
+ * specifically the sign in method of email and password. It validates
+ * the user email and password. This is the fragment use before
+ * navigating to the main screen.
+ */
 public class LoginFragment extends Fragment {
 
     private static final String TAG = "Register";

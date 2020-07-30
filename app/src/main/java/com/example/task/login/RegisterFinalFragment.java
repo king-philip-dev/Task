@@ -50,7 +50,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-
+/**
+ * This class contains the final registration UI and logic.
+ * It uses the Firebase service for user authentication and database.
+ *
+ */
 public class RegisterFinalFragment extends Fragment {
 
     private static final String TAG = "Register";

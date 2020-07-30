@@ -43,21 +43,22 @@ import java.util.List;
  */
 public class MainActivity extends AppCompatActivity {
 
-    // Request codes for intents.
+    // Intent request codes
     public static final int NEW_TASK_REQUEST_CODE = 1;
     public static final int UPDATE_TASK_REQUEST_CODE = 2;
 
+    // Intent extended data string constants
     public static final String EXTRA_DATA_ID = "extra_data_id";
     public static final String EXTRA_DATA_UPDATE_TASK = "extra_task_to_be_updated";
     public static final String EXTRA_DATA_UPDATE_DETAILS = "extra_details_to_be_updated";
     public static final String EXTRA_DATA_UPDATE_DATE = "extra_date_to_be_updated";
 
+    // Shared preferences string constants
     private static final String PREF_FILE = "shared_pref_file";
     private static final String VISIBILITY_KEY = "visibility";
     private boolean isItemVisible;
 
-
-    // Initialize member variables
+    // Member variables
     private FirebaseAuth mAuth;
     private TaskViewModel mViewModel;
     private SharedPreferences mSharedPrefs;
@@ -66,11 +67,12 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private Snackbar mPressAgainSnackBar;
 
+    // Declared variable
     private long beforeExitTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme_NoActionBar);
+        setTheme(R.style.AppTheme_NoActionBar); // Set the base theme of this context.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -170,6 +172,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    /**
+     * Dispatch incoming result to the NewTaskActivity.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -181,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
                 long date = data.getLongExtra(NewTaskActivity.EXTRA_REPLY_DATE, 0);
                 Date dateData = new Date(date); // Convert the date long type to date type.
 
+                // Insert new task to database.
                 if (date != 0) {
                     Task task = new Task(taskData, detailsData, dateData);
                     mViewModel.insert(task);
@@ -193,15 +200,16 @@ public class MainActivity extends AppCompatActivity {
             if (data != null) {
                 int id = data.getIntExtra(NewTaskActivity.EXTRA_REPLY_ID, -1);
                 if (id == -1) {
-                    Toast.makeText(this, "Task cannot be updated.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.cannot_be_updated, Toast.LENGTH_SHORT).show();
                     return;
                 }
-
+                // Retrieve the extended data from the NewTaskActivity intent.
                 String taskData = data.getStringExtra(NewTaskActivity.EXTRA_REPLY_TASK);
                 String detailsData = data.getStringExtra(NewTaskActivity.EXTRA_REPLY_DETAILS);
                 long date = data.getLongExtra(NewTaskActivity.EXTRA_REPLY_DATE, 0);
                 Date dateData = new Date(date);
 
+                // Update the edited task.
                 if (date != 0) {
                     Task task = new Task(taskData, detailsData, dateData);
                     task.setId(id);
@@ -211,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
                     task.setId(id);
                     mViewModel.update(task);
                 }
-                Toast.makeText(this, "Task updated.", Toast.LENGTH_SHORT).show();
             }
         } else {
             Snackbar.make(mCoordinatorLayout, "Task not saved.", Snackbar.LENGTH_SHORT).show();
@@ -220,14 +227,21 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate a menu in this activity's toolbar
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
 
+    /**
+     * Prepare the Screen's standard options menu to be displayed.
+     * This is called right before the menu is shown, every time it is shown.
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        // Retrieve the saved boolean in the shared prefs file.
         isItemVisible = mSharedPrefs.getBoolean(VISIBILITY_KEY, isItemVisible);
 
+        // This will show and hide the particular icon of the menu.
         if (isItemVisible) {
             menu.findItem(R.id.linear_view).setVisible(true);
             menu.findItem(R.id.staggered_view).setVisible(false);
@@ -246,16 +260,19 @@ public class MainActivity extends AppCompatActivity {
         return super.onPrepareOptionsMenu(menu);
     }
 
+    /**
+     * This hook is called whenever an item in your options menu is selected.
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         SharedPreferences.Editor editor = mSharedPrefs.edit();
         int id = item.getItemId();
         switch (id) {
             case R.id.delete_all_tasks:
-                confirmDeleteAllTasks();
+                confirmDeleteAllTasks(); // Delete all tasks.
                 return true;
             case R.id.log_out:
-                logoutUser();
+                logoutUser(); // Log out user.
                 return true;
             case R.id.linear_view:
                 item.setIcon(R.drawable.ic_round_dashboard_24);

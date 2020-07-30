@@ -28,6 +28,9 @@ import java.util.Objects;
 
 /**
  * This class displays the initial form of the user registration.
+ * It contains the user name and phone number fields.
+ * The data entered here will be sent to the final fragment
+ * to be save in the Firebase database.
  */
 public class RegisterInitialFragment extends Fragment {
 

@@ -55,6 +55,9 @@ public class TaskListAdapter extends ListAdapter<Task, TaskListAdapter.TaskViewH
         return new TaskViewHolder(itemView);
     }
 
+    /**
+     * Called by RecyclerView to display the data at the specified position.
+     */
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         // Get the position of the task item in the date set.
@@ -101,7 +104,12 @@ public class TaskListAdapter extends ListAdapter<Task, TaskListAdapter.TaskViewH
     }
 
 
+    /**
+     * This class describes an item view and metadata about
+     * its place within the RecyclerView.
+     */
     public class TaskViewHolder extends RecyclerView.ViewHolder {
+        // Member variables.
         private TextView taskItemView;
         private TextView detailsItemView;
         private TextView dateItemView;
@@ -109,6 +117,8 @@ public class TaskListAdapter extends ListAdapter<Task, TaskListAdapter.TaskViewH
 
         public TaskViewHolder(View itemView) {
             super(itemView);
+
+            // Get the instance of the RecyclerView item views.
             taskItemView = itemView.findViewById(R.id.textView_task);
             detailsItemView = itemView.findViewById(R.id.textView_details);
             dateItemView = itemView.findViewById(R.id.textView_date);
@@ -136,12 +146,18 @@ public class TaskListAdapter extends ListAdapter<Task, TaskListAdapter.TaskViewH
         }
     }
 
+    /**
+     * An interface to invoke the user click.
+     */
     public interface OnItemClickListener {
         void onItemClick(Task task);
-
         void onDeleteClick(int position);
     }
 
+    /**
+     * This is a method use to handle the click on the item.
+     * @param itemClickListener
+     */
     public void setOnItemClickListener(OnItemClickListener itemClickListener) {
         TaskListAdapter.itemClickListener = itemClickListener;
     }

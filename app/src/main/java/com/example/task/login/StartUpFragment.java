@@ -22,6 +22,7 @@ import com.example.task.R;
 
 /**
  * This class provides a conditional process for the user to login or register.
+ * The user must register first before logging in and use the function of the app.
  */
 public class StartUpFragment extends Fragment {
 
